@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LecroySS — Developer Documentation</title>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   CSS CUSTOM PROPERTIES — light / dark themes
+═══════════════════════════════════════════════════════════ */
+:root {
+  --accent:        #5b8af5;
+  --accent-soft:   rgba(91,138,245,.18);
+  --accent2:       #a78bfa;
+  --success:       #34d399;
+  --warning:       #fbbf24;
+  --danger:        #f87171;
+  --radius:        14px;
+  --radius-sm:     8px;
+  --transition:    .25s cubic-bezier(.4,0,.2,1);
+  --font-mono:     'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  --font-sans:     'Inter', system-ui, -apple-system, sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg:            #0d0f17;
+  --bg2:           #13161f;
+  --bg3:           #1a1e2e;
+  --surface:       rgba(255,255,255,.04);
+  --surface-hover: rgba(255,255,255,.07);
+  --border:        rgba(255,255,255,.08);
+  --border-strong: rgba(255,255,255,.15);
+  --glass:         rgba(19,22,31,.72);
+  --glass-border:  rgba(255,255,255,.10);
+  --text:          #e4e8f5;
+  --text-muted:    #7a8099;
+  --text-faint:    #4a5068;
+  --code-bg:       rgba(0,0,0,.45);
+  --shadow:        0 8px 32px rgba(0,0,0,.6), 0 2px 8px rgba(0,0,0,.4);
+  --shadow-card:   0 4px 24px rgba(0,0,0,.5);
+  --glow:          0 0 40px rgba(91,138,245,.12);
+}
+
+[data-theme="light"] {
+  --bg:            #f0f2fa;
+  --bg2:           #e8eaf5;
+  --bg3:           #dfe2f0;
+  --surface:       rgba(255,255,255,.7);
+  --surface-hover: rgba(255,255,255,.9);
+  --border:        rgba(0,0,0,.08);
+  --border-strong: rgba(0,0,0,.18);
+  --glass:         rgba(240,242,250,.80);
+  --glass-border:  rgba(255,255,255,.70);
+  --text:          #1a1d2e;
+  --text-muted:    #5a6080;
+  --text-faint:    #9aa0b8;
+  --code-bg:       rgba(0,0,0,.05);
+  --shadow:        0 8px 32px rgba(0,0,50,.10), 0 2px 8px rgba(0,0,50,.06);
+  --shadow-card:   0 4px 24px rgba(0,0,50,.08);
+  --glow:          0 0 40px rgba(91,138,245,.08);
+}
+
+/* ═══════════════════════ RESET / BASE ═══════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* Animated gradient background orbs */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 20%, rgba(91,138,245,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 80%, rgba(167,139,250,.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════ LAYOUT ═════════════════════════════ */
+.page-wrapper {
+  position: relative; z-index: 1;
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════ TOP BAR ════════════════════════════ */
+.topbar {
+  grid-column: 1 / -1;
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; gap: 16px;
+  padding: 0 28px;
+  height: 58px;
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: var(--shadow);
+}
+
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+}
+
+.logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff;
+  box-shadow: 0 0 16px rgba(91,138,245,.4);
+}
+
+.logo-text { font-weight: 700; font-size: 1rem; color: var(--text); letter-spacing: -.01em; }
+.logo-sub  { font-size: .7rem; color: var(--text-muted); margin-top: -2px; }
+
+.topbar-spacer { flex: 1; }
+
+.topbar-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 4px 12px;
+  background: var(--accent-soft);
+  border: 1px solid rgba(91,138,245,.25);
+  border-radius: 20px;
+  font-size: .75rem; font-weight: 600; color: var(--accent);
+}
+
+.theme-toggle {
+  width: 38px; height: 38px;
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  transition: all var(--transition);
+}
+.theme-toggle:hover { background: var(--surface-hover); color: var(--accent); border-color: var(--accent); }
+
+/* ═══════════════════════ SIDEBAR ════════════════════════════ */
+.sidebar {
+  position: sticky;
+  top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+  padding: 24px 16px;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-right: 1px solid var(--glass-border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+.nav-group-label {
+  font-size: .65rem; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 12px 10px 4px;
+}
+
+.nav-link {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: .855rem;
+  transition: all var(--transition);
+}
+.nav-link:hover { background: var(--surface-hover); color: var(--text); }
+.nav-link.active { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.nav-link .dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  background: currentColor; opacity: .5;
+}
+.nav-link.active .dot { opacity: 1; }
+
+/* ═══════════════════════ MAIN CONTENT ═══════════════════════ */
+.content {
+  padding: 40px 52px 80px;
+  max-width: 960px;
+  overflow-x: hidden;
+}
+
+/* ─── Section headings ─── */
+h1, h2, h3, h4 { letter-spacing: -.02em; }
+
+.page-title {
+  font-size: 2.4rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--text) 30%, var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: .4rem;
+}
+
+.page-subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 36px;
+}
+
+.section-anchor { display: block; height: 0; visibility: hidden; }
+
+h2.section-heading {
+  font-size: 1.5rem; font-weight: 700;
+  color: var(--text);
+  margin: 52px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+
+h2.section-heading .icon {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem; flex-shrink: 0;
+}
+
+h3.sub-heading {
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--text);
+  margin: 28px 0 10px;
+}
+
+p { color: var(--text-muted); margin-bottom: 14px; }
+p strong { color: var(--text); font-weight: 600; }
+p a, a { color: var(--accent); text-decoration: none; }
+p a:hover, a:hover { text-decoration: underline; }
+
+/* ═══════════════════════ GLASS CARDS ════════════════════════ */
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-card), var(--glow);
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover { border-color: var(--border-strong); }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-card);
+}
+.stat-card .stat-label { font-size: .75rem; font-weight: 600; color: var(--text-faint); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+.stat-card .stat-value { font-size: 1.5rem; font-weight: 800; color: var(--text); }
+.stat-card .stat-desc  { font-size: .8rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ═══════════════════════ CODE BLOCKS ═══════════════════════ */
+pre, code { font-family: var(--font-mono); }
+
+code {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 4px;
+  font-size: .84em; color: var(--accent2);
+}
+
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin: 16px 0 20px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.code-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid var(--border);
+}
+.code-header .code-lang {
+  font-size: .7rem; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text-faint);
+}
+.code-header .code-file {
+  font-size: .78rem; color: var(--text-muted); margin-left: auto;
+  font-family: var(--font-mono);
+}
+
+pre {
+  padding: 20px;
+  overflow-x: auto;
+  font-size: .82rem;
+  line-height: 1.65;
+  color: var(--text);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+pre::-webkit-scrollbar { height: 4px; }
+pre::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+
+/* Syntax pseudo-highlighting */
+.kw  { color: #c792ea; }   /* keyword */
+.fn  { color: #82aaff; }   /* function */
+.cl  { color: #ffcb6b; }   /* class */
+.st  { color: #c3e88d; }   /* string */
+.cm  { color: #546e7a; font-style: italic; } /* comment */
+.nm  { color: #f78c6c; }   /* number */
+.op  { color: #89ddff; }   /* operator / punctuation */
+
+[data-theme="light"] .kw  { color: #7c3aed; }
+[data-theme="light"] .fn  { color: #2563eb; }
+[data-theme="light"] .cl  { color: #d97706; }
+[data-theme="light"] .st  { color: #059669; }
+[data-theme="light"] .cm  { color: #64748b; }
+[data-theme="light"] .nm  { color: #dc2626; }
+[data-theme="light"] .op  { color: #0891b2; }
+
+/* ═══════════════════════ CALLOUTS ═══════════════════════════ */
+.callout {
+  display: flex; gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid;
+  margin: 16px 0 20px;
+  backdrop-filter: blur(8px);
+}
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+.callout-body { flex: 1; font-size: .9rem; color: var(--text-muted); }
+.callout-body strong { color: var(--text); display: block; margin-bottom: 3px; }
+
+.callout.info    { background: rgba(91,138,245,.08);  border-color: var(--accent); }
+.callout.success { background: rgba(52,211,153,.08);  border-color: var(--success); }
+.callout.warning { background: rgba(251,191,36,.08);  border-color: var(--warning); }
+.callout.danger  { background: rgba(248,113,113,.08); border-color: var(--danger); }
+
+/* ═══════════════════════ TABLES ════════════════════════════ */
+.table-wrap { overflow-x: auto; margin: 16px 0 24px; border-radius: var(--radius-sm); }
+
+table {
+  width: 100%; border-collapse: collapse;
+  font-size: .875rem;
+}
+
+thead tr {
+  background: rgba(91,138,245,.10);
+}
+
+th {
+  padding: 10px 16px;
+  text-align: left;
+  font-size: .72rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--text-faint);
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  vertical-align: top;
+}
+
+td:first-child { font-family: var(--font-mono); font-size: .8rem; color: var(--accent2); }
+
+tbody tr:hover { background: var(--surface-hover); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ═══════════════════════ FLOW DIAGRAM ═══════════════════════ */
+.flow {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 20px 0 28px;
+}
+
+.flow-step {
+  display: flex; align-items: flex-start; gap: 16px;
+  position: relative;
+}
+.flow-step + .flow-step { margin-top: 0; }
+
+.flow-left {
+  display: flex; flex-direction: column; align-items: center;
+  flex-shrink: 0; width: 40px;
+}
+
+.flow-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #fff; font-weight: 700; font-size: .85rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(91,138,245,.35);
+  z-index: 1;
+}
+
+.flow-line {
+  width: 2px; flex: 1; min-height: 24px;
+  background: linear-gradient(to bottom, var(--accent), var(--accent2));
+  opacity: .25;
+  margin: 4px 0;
+}
+
+.flow-body {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  flex: 1;
+  backdrop-filter: blur(8px);
+}
+
+.flow-body h4 { font-size: .9rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.flow-body p  { font-size: .82rem; color: var(--text-muted); margin: 0; }
+
+/* ═══════════════════════ BADGE ═════════════════════════════ */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 10px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.badge.blue   { background: rgba(91,138,245,.15);  color: var(--accent); border: 1px solid rgba(91,138,245,.3); }
+.badge.purple { background: rgba(167,139,250,.15); color: var(--accent2); border: 1px solid rgba(167,139,250,.3); }
+.badge.green  { background: rgba(52,211,153,.15);  color: var(--success); border: 1px solid rgba(52,211,153,.3); }
+.badge.yellow { background: rgba(251,191,36,.15);  color: var(--warning); border: 1px solid rgba(251,191,36,.3); }
+.badge.red    { background: rgba(248,113,113,.15); color: var(--danger);  border: 1px solid rgba(248,113,113,.3); }
+
+/* ═══════════════════════ PROTOCOL DIAGRAM ═══════════════════ */
+.vicp-diagram {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 16px 0 24px;
+}
+
+.vicp-row {
+  display: flex; align-items: center; gap: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono); font-size: .8rem;
+}
+
+.vicp-cell {
+  padding: 10px 14px;
+  text-align: center;
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  flex: 1;
+}
+.vicp-cell:last-child { border-right: none; flex: 3; }
+.vicp-cell .byte-label { font-size: .65rem; color: var(--text-faint); text-transform: uppercase; letter-spacing: .06em; }
+.vicp-cell .byte-val   { font-size: .85rem; font-weight: 700; color: var(--text); }
+.vicp-cell .byte-name  { font-size: .7rem;  color: var(--accent2); }
+
+.vicp-header-row { background: rgba(91,138,245,.06); }
+.vicp-data-row   { background: rgba(167,139,250,.06); }
+
+/* ═══════════════════════ VENDOR GRID ════════════════════════ */
+.vendor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px; margin: 16px 0 24px;
+}
+
+.vendor-card {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  backdrop-filter: blur(8px);
+}
+.vendor-card .v-name  { font-weight: 700; font-size: .9rem; color: var(--text); margin-bottom: 4px; }
+.vendor-card .v-cmd   { font-family: var(--font-mono); font-size: .75rem; color: var(--accent2); margin-bottom: 6px; }
+.vendor-card .v-notes { font-size: .78rem; color: var(--text-muted); }
+
+/* ═══════════════════════ SEARCH BAR ════════════════════════ */
+.search-wrap {
+  position: relative; margin-bottom: 8px;
+}
+.search-wrap input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px 8px 34px;
+  font-size: .8rem; color: var(--text);
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color var(--transition);
+}
+.search-wrap input::placeholder { color: var(--text-faint); }
+.search-wrap input:focus { border-color: var(--accent); }
+.search-wrap .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: .85rem; pointer-events: none; }
+
+/* ═══════════════════════ FOOTER ════════════════════════════ */
+.footer {
+  grid-column: 1 / -1;
+  padding: 20px 28px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+  font-size: .78rem; color: var(--text-faint);
+}
+
+/* ═══════════════════════ RESPONSIVE ════════════════════════ */
+@media (max-width: 900px) {
+  .page-wrapper { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .content { padding: 24px 20px 60px; }
+  .card-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<!-- ═══════════════════ TOP BAR ═══════════════════ -->
+<header class="topbar">
+  <a href="#" class="topbar-logo">
+    <div class="logo-icon">⚡</div>
+    <div>
+      <div class="logo-text">LecroySS</div>
+      <div class="logo-sub">Developer Documentation</div>
+    </div>
+  </a>
+  <div class="topbar-spacer"></div>
+  <span class="topbar-pill">v1.0 · Python 3.12</span>
+  <button class="theme-toggle" id="themeBtn" title="Toggle light/dark mode">🌙</button>
+</header>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav class="sidebar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="sidebarSearch" placeholder="Filter navigation…" />
+  </div>
+
+  <div class="nav-group-label">Overview</div>
+  <a class="nav-link active" href="#overview">    <span class="dot"></span> Introduction</a>
+  <a class="nav-link" href="#architecture">       <span class="dot"></span> Architecture</a>
+  <a class="nav-link" href="#quickstart">         <span class="dot"></span> Quick Start</a>
+  <a class="nav-link" href="#config">             <span class="dot"></span> Configuration</a>
+
+  <div class="nav-group-label">lecroy_capture.py</div>
+  <a class="nav-link" href="#flow-ethernet">      <span class="dot"></span> Ethernet Flow</a>
+  <a class="nav-link" href="#flow-usb">           <span class="dot"></span> USB Flow</a>
+  <a class="nav-link" href="#vicp-protocol">      <span class="dot"></span> VICP Protocol</a>
+  <a class="nav-link" href="#visa-fallback">      <span class="dot"></span> VISA Fallback</a>
+  <a class="nav-link" href="#vendor-dispatch">    <span class="dot"></span> Vendor Dispatch</a>
+  <a class="nav-link" href="#image-utils">        <span class="dot"></span> Image Utilities</a>
+  <a class="nav-link" href="#network-utils">      <span class="dot"></span> Network Utilities</a>
+  <a class="nav-link" href="#api-reference">      <span class="dot"></span> API Reference</a>
+
+  <div class="nav-group-label">scope_scanner.py</div>
+  <a class="nav-link" href="#scanner-overview">   <span class="dot"></span> Scanner Overview</a>
+  <a class="nav-link" href="#scanner-eth">        <span class="dot"></span> Ethernet Scan</a>
+  <a class="nav-link" href="#scanner-usb">        <span class="dot"></span> USB Scan</a>
+  <a class="nav-link" href="#scanner-api">        <span class="dot"></span> Scanner API</a>
+
+  <div class="nav-group-label">Reference</div>
+  <a class="nav-link" href="#protocols">          <span class="dot"></span> Protocol Reference</a>
+  <a class="nav-link" href="#vendors">            <span class="dot"></span> Vendor SCPI Commands</a>
+  <a class="nav-link" href="#deps">               <span class="dot"></span> Dependencies</a>
+  <a class="nav-link" href="#troubleshooting">    <span class="dot"></span> Troubleshooting</a>
+</nav>
+
+<!-- ═══════════════════ MAIN CONTENT ═══════════════════ -->
+<main class="content">
+
+  <!-- ── HERO ── -->
+  <a class="section-anchor" id="overview"></a>
+  <h1 class="page-title">LecroySS Documentation</h1>
+  <p class="page-subtitle">
+    Multi-vendor oscilloscope screen-capture toolkit — VICP, VXI-11, HiSLIP, USB-TMC
+  </p>
+
+  <div class="card-grid">
+    <div class="stat-card">
+      <div class="stat-label">Scripts</div>
+      <div class="stat-value">2</div>
+      <div class="stat-desc">lecroy_capture.py · scope_scanner.py</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Protocols</div>
+      <div class="stat-value">4</div>
+      <div class="stat-desc">VICP · VXI-11 · HiSLIP · USB-TMC</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Vendors Supported</div>
+      <div class="stat-value">5+</div>
+      <div class="stat-desc">LeCroy · Tektronix · Keysight · Rigol · Siglent</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Python</div>
+      <div class="stat-value">3.10+</div>
+      <div class="stat-desc">Uses modern type hints and match expressions</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <p>
+      <strong>LecroySS</strong> is a turnkey, zero-configuration Python toolkit for capturing 
+      screenshots from laboratory oscilloscopes over Ethernet (TCP/IP) or USB. It supports 
+      every major oscilloscope vendor through automatic vendor detection and SCPI command 
+      dispatch. For LeCroy scopes specifically, it implements the proprietary 
+      <strong>VICP (Visual Instrument Control Protocol)</strong> natively — bypassing the VXI-11 
+      limitation that causes image data to arrive as a 52-byte stub.
+    </p>
+    <p>
+      The companion <strong>scope_scanner.py</strong> discovers all instruments on your 
+      network and USB bus simultaneously, printing a formatted results table with VISA 
+      resource strings ready to paste directly into the capture script.
+    </p>
+  </div>
+
+  <!-- ── ARCHITECTURE ── -->
+  <a class="section-anchor" id="architecture"></a>
+  <h2 class="section-heading"><span class="icon">🏗</span> Architecture</h2>
+
+  <p>
+    Both scripts are deliberately <strong>single-file, dependency-minimal</strong>. All 
+    configuration lives at the top of each file in a clearly-delimited USER CONFIGURATION 
+    block so operators can use the tools without reading the source code.
+  </p>
+
+  <div class="card">
+    <h3 class="sub-heading">Module Layers — lecroy_capture.py</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Layer</th><th>Functions / Constants</th><th>Responsibility</th></tr></thead>
+        <tbody>
+          <tr><td>Config</td><td>Top 80 lines</td><td>User-editable settings: IP, USB resource, save path, timeout, color</td></tr>
+          <tr><td>VISA helpers</td><td><code>_open_rm()</code></td><td>NI-VISA / IVI system backend with pyvisa-py fallback</td></tr>
+          <tr><td>Path utilities</td><td><code>_timestamped_path()</code></td><td>Insert <code>_YYYYMMDD_HHMMSS</code> before file extension</td></tr>
+          <tr><td>Network utilities</td><td><code>validate_ip()</code>, <code>subnet_info()</code>, <code>check_tcp_reachable()</code>, <code>get_local_ip_for()</code></td><td>IP validation, subnet comparison, reachability probe</td></tr>
+          <tr><td>VISA resource builder</td><td><code>build_ethernet_resources()</code>, <code>find_usb_resource()</code></td><td>Construct candidate VISA strings; enumerate USB devices</td></tr>
+          <tr><td>Vendor detection</td><td><code>detect_vendor()</code></td><td>Parse <code>*IDN?</code> response into short tag</td></tr>
+          <tr><td>VICP protocol</td><td><code>_vicp_send()</code>, <code>_vicp_recv()</code>, <code>_dump_lecroy_vicp_raw()</code>, <code>vicp_capture()</code></td><td>Full LeCroy VICP native path over port 1861</td></tr>
+          <tr><td>SCPI capture</td><td><code>scpi_capture()</code>, <code>_screen_dump()</code></td><td>VISA open → IDN → vendor dispatch → image receive</td></tr>
+          <tr><td>Vendor implementations</td><td><code>_dump_lecroy()</code>, <code>_dump_tektronix()</code>, <code>_dump_keysight()</code>, <code>_dump_rigol()</code></td><td>Vendor-specific SCPI hardcopy commands</td></tr>
+          <tr><td>Image utilities</td><td><code>_strip_ieee_block()</code>, <code>_save_image()</code></td><td>IEEE 488.2 block header removal; PNG/BMP save with Pillow</td></tr>
+          <tr><td>Auth helper</td><td><code>try_http_auth()</code></td><td>HTTP Basic Auth handshake for web-gated scope interfaces</td></tr>
+          <tr><td>Entry point</td><td><code>main()</code></td><td>Top-level orchestration; USB / Ethernet branching</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── QUICK START ── -->
+  <a class="section-anchor" id="quickstart"></a>
+  <h2 class="section-heading"><span class="icon">🚀</span> Quick Start</h2>
+
+  <h3 class="sub-heading">1 · Install dependencies</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Shell</span><span class="code-file">setup.bat (or manual)</span></div>
+    <pre><span class="cm"># One-shot setup (Windows)</span>
+setup.bat
+
+<span class="cm"># Manual equivalent</span>
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt</pre>
+  </div>
+
+  <h3 class="sub-heading">2 · Edit configuration</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — USER CONFIGURATION block</span></div>
+    <pre><span class="cm"># ── Connection type ──────────────────────────────────────── #</span>
+CONNECTION_TYPE <span class="op">=</span> <span class="st">"ETHERNET"</span>   <span class="cm"># or "USB"</span>
+
+<span class="cm"># ── Ethernet ─────────────────────────────────────────────── #</span>
+SCOPE_IP        <span class="op">=</span> <span class="st">"192.168.1.51"</span>
+SCOPE_PORT      <span class="op">=</span> <span class="nm">0</span>            <span class="cm"># 0 = auto</span>
+
+<span class="cm"># ── USB ──────────────────────────────────────────────────── #</span>
+USB_RESOURCE    <span class="op">=</span> <span class="st">""</span>           <span class="cm"># "" = auto-detect</span>
+
+<span class="cm"># ── Output ───────────────────────────────────────────────── #</span>
+SAVE_PATH       <span class="op">=</span> <span class="st">r"C:\captures\scope_screenshot.png"</span>
+DISPLAY_COLOR   <span class="op">=</span> <span class="st">"WHITE"</span>      <span class="cm"># "WHITE" or "BLACK"</span></pre>
+  </div>
+
+  <h3 class="sub-heading">3 · Run</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Shell</span></div>
+    <pre>python lecroy_capture.py
+
+<span class="cm"># Discover instruments first</span>
+python scope_scanner.py</pre>
+  </div>
+
+  <!-- ── CONFIGURATION ── -->
+  <a class="section-anchor" id="config"></a>
+  <h2 class="section-heading"><span class="icon">⚙️</span> Configuration Reference</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Variable</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>CONNECTION_TYPE</td><td>str</td><td><code>"ETHERNET"</code></td><td>Connection mode. <code>"ETHERNET"</code> or <code>"USB"</code>.</td></tr>
+        <tr><td>SCOPE_IP</td><td>str</td><td><code>"192.168.1.51"</code></td><td>IPv4 address of the oscilloscope. Ethernet mode only.</td></tr>
+        <tr><td>SCOPE_PORT</td><td>int</td><td><code>0</code></td><td><code>0</code> = auto (tries VXI-11 → HiSLIP → raw SCPI). Set <code>1861</code> for VICP-only, <code>5025</code> for raw SCPI-only.</td></tr>
+        <tr><td>USERNAME</td><td>str</td><td><code>""</code></td><td>HTTP Basic Auth username. Required only if the scope web interface is password-protected.</td></tr>
+        <tr><td>PASSWORD</td><td>str</td><td><code>""</code></td><td>HTTP Basic Auth password. Leave empty if not used.</td></tr>
+        <tr><td>USB_RESOURCE</td><td>str</td><td><code>""</code></td><td>Exact VISA resource string for USB, e.g. <code>"USB0::0x05FF::0x1023::LCRY4903C21017::INST"</code>. Leave <code>""</code> to auto-detect first found USB instrument.</td></tr>
+        <tr><td>SAVE_PATH</td><td>str</td><td><code>r"C:\captures\scope_screenshot.png"</code></td><td>Output file path. Accepts <code>.png</code> or <code>.bmp</code>. Timestamp is appended automatically before the extension.</td></tr>
+        <tr><td>TIMEOUT_SEC</td><td>int</td><td><code>15</code></td><td>Global timeout in seconds for TCP connections and VISA operations.</td></tr>
+        <tr><td>DISPLAY_COLOR</td><td>str</td><td><code>"WHITE"</code></td><td>Screenshot background: <code>"WHITE"</code> (print-friendly) or <code>"BLACK"</code> (scope native look). Applies to all vendor implementations.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── ETHERNET FLOW ── -->
+  <a class="section-anchor" id="flow-ethernet"></a>
+  <h2 class="section-heading"><span class="icon">🌐</span> Ethernet Capture Flow</h2>
+
+  <p>
+    When <code>CONNECTION_TYPE = "ETHERNET"</code>, the script follows a strict 
+    priority-ordered protocol cascade. VICP is always tried first because LeCroy scopes 
+    in <em>TCPIP/VICP mode</em> cannot transfer binary image data over VXI-11.
+  </p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">1</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>Validate &amp; diagnose</h4>
+        <p><code>validate_ip()</code> checks the IP string format. <code>subnet_info()</code> detects the local NIC and prints whether scope and PC share the same /24 subnet. <code>check_tcp_reachable()</code> probes ports 1861, 5025, 80.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">2</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>vicp_capture() — Native VICP on port 1861</h4>
+        <p>Opens a raw TCP socket to port 1861. Sends <code>*IDN?</code> as a VICP frame, receives the IDN response, confirms vendor == LECROY. Then sends <code>HCSU</code> + <code>SCREEN_DUMP</code> and accumulates all multi-frame VICP response data. Returns <code>True</code> on a successful &gt;100-byte image. This path is sufficient for all LeCroy scopes configured in <em>TCPIP/VICP</em> mode.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">3</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>scpi_capture() — VISA / VXI-11 (fallback)</h4>
+        <p>Only reached if VICP fails (non-LeCroy scope, or VICP disabled). Tries VISA resource strings in order: <code>inst0::INSTR</code> (VXI-11) → <code>hislip0::INSTR</code> (HiSLIP) → <code>5025::SOCKET</code> (raw SCPI). For each, opens the resource, queries <code>*IDN?</code>, dispatches to the vendor-specific dump function.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">4</div></div>
+      <div class="flow-body">
+        <h4>VICP socket fallback inside scpi_capture()</h4>
+        <p>If VXI-11 opens successfully but the image is too small (&lt;100 bytes), and the vendor is LECROY, the function closes the VISA connection and retries via <code>_dump_lecroy_vicp_raw()</code> — the same raw VICP socket as step 2 but called as a last resort from within the VISA path.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── USB FLOW ── -->
+  <a class="section-anchor" id="flow-usb"></a>
+  <h2 class="section-heading"><span class="icon">🔌</span> USB Capture Flow</h2>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">1</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>Open ResourceManager</h4>
+        <p><code>_open_rm()</code> tries the system VISA backend first (NI-VISA, Keysight IO, IVI Foundation). If the system backend raises, falls back to <code>pyvisa.ResourceManager("@py")</code> (pure Python, requires <code>pyusb</code> + <code>libusb</code>).</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">2</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>Resolve USB resource string</h4>
+        <p>If <code>USB_RESOURCE</code> is set, it is used directly. Otherwise <code>find_usb_resource()</code> searches three VISA glob patterns in sequence: <code>USB?*::INSTR</code> → <code>USB?*::INST</code> → <code>USB?*</code>, stopping at the first match. This covers both standard USB-TMC (<code>::INSTR</code>) and LeCroy IVI driver suffix (<code>::INST</code>).</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">3</div></div>
+      <div class="flow-body">
+        <h4>scpi_capture() with suffix retry</h4>
+        <p>If the resource string ends in <code>::INSTR</code>, a variant with <code>::INST</code> is also added to the candidate list (and vice versa). The first candidate that <code>rm.open_resource()</code> succeeds on is used. This silently corrects LeCroy IVI driver suffix mismatches without requiring the user to know the exact suffix.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── VICP PROTOCOL ── -->
+  <a class="section-anchor" id="vicp-protocol"></a>
+  <h2 class="section-heading"><span class="icon">📡</span> VICP Protocol Deep Dive</h2>
+
+  <p>
+    <strong>VICP (Visual Instrument Control Protocol)</strong> is LeCroy's proprietary TCP/IP 
+    instrument control protocol. It runs on <strong>port 1861</strong> and predates VXI-11. 
+    Every message — command, query, and binary image response — is prefixed with an 
+    8-byte binary header.
+  </p>
+
+  <h3 class="sub-heading">Frame Structure</h3>
+
+  <div class="vicp-diagram">
+    <div class="vicp-row vicp-header-row">
+      <div class="vicp-cell"><div class="byte-label">Byte 0</div><div class="byte-val">OP</div><div class="byte-name">Operation flags</div></div>
+      <div class="vicp-cell"><div class="byte-label">Byte 1</div><div class="byte-val">VER</div><div class="byte-name">Version (0x01)</div></div>
+      <div class="vicp-cell"><div class="byte-label">Byte 2</div><div class="byte-val">SEQ</div><div class="byte-name">Sequence 1–255</div></div>
+      <div class="vicp-cell"><div class="byte-label">Byte 3</div><div class="byte-val">PAD</div><div class="byte-name">Reserved (0x00)</div></div>
+      <div class="vicp-cell"><div class="byte-label">Bytes 4–7</div><div class="byte-val">LEN</div><div class="byte-name">Payload length (big-endian uint32)</div></div>
+    </div>
+    <div class="vicp-row vicp-data-row">
+      <div class="vicp-cell" style="flex:1"><div class="byte-label">Bytes 8…</div><div class="byte-val">PAYLOAD</div><div class="byte-name">ASCII command or binary image data</div></div>
+    </div>
+  </div>
+
+  <h3 class="sub-heading">Operation Flags (OP byte)</h3>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Bit</th><th>Mask</th><th>Name</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>7</td><td><code>0x80</code></td><td>DATA</td><td>Frame carries instrument data (command text or image bytes). Frames without this bit are control/SRQ frames and should be discarded.</td></tr>
+        <tr><td>6</td><td><code>0x40</code></td><td>REMOTE</td><td>Scope should enter remote mode (ignore front-panel controls).</td></tr>
+        <tr><td>5</td><td><code>0x20</code></td><td>LOCKOUT</td><td>Full lockout of front panel.</td></tr>
+        <tr><td>4</td><td><code>0x10</code></td><td>CLEAR</td><td>Device clear — abort pending operations.</td></tr>
+        <tr><td>3</td><td><code>0x08</code></td><td>SRQ</td><td>Service Request — scope is requesting attention. Scope-to-host only.</td></tr>
+        <tr><td>2</td><td><code>0x04</code></td><td>REQSEND</td><td>Request scope to send its output buffer.</td></tr>
+        <tr><td>0</td><td><code>0x01</code></td><td>EOI</td><td>End Of Identity — this is the last frame of the current message. Critical for detecting end of multi-frame image transfer.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <strong>Why 52 bytes over VXI-11?</strong>
+      When <code>SCREEN_DUMP</code> is sent via VXI-11 (port 111 / Sun RPC), LeCroy returns 
+      a short text acknowledgment (~52 bytes) over VXI-11 and then streams the actual BMP 
+      image data separately over the VICP port (1861). If the VXI-11 client closes before 
+      listening on 1861, the image is lost. The solution is to use VICP exclusively for all 
+      communication.
+    </div>
+  </div>
+
+  <h3 class="sub-heading">Python Implementation</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — VICP constants &amp; helpers</span></div>
+    <pre><span class="cm"># Header format: big-endian — op(1) version(1) seq(1) pad(1) length(4)</span>
+_VICP_HDR  <span class="op">=</span> <span class="st">">BBBBI"</span>
+_VICP_HLEN <span class="op">=</span> <span class="nm">8</span>
+_VICP_SEQ  <span class="op">=</span> [<span class="nm">0</span>]   <span class="cm"># mutable list so _vicp_next_seq() can update it</span>
+
+<span class="kw">def</span> <span class="fn">_vicp_send</span>(sock: socket.socket, cmd: str) <span class="op">-></span> <span class="kw">None</span>:
+    payload <span class="op">=</span> cmd.encode(<span class="st">"ascii"</span>)
+    op      <span class="op">=</span> <span class="nm">0x80</span> <span class="op">|</span> <span class="nm">0x40</span> <span class="op">|</span> <span class="nm">0x01</span>   <span class="cm"># DATA | REMOTE | EOI</span>
+    hdr     <span class="op">=</span> struct.pack(_VICP_HDR, op, <span class="nm">0x01</span>, _vicp_next_seq(), <span class="nm">0x00</span>, len(payload))
+    sock.sendall(hdr <span class="op">+</span> payload)
+
+<span class="kw">def</span> <span class="fn">_vicp_recv</span>(sock: socket.socket) <span class="op">-></span> bytes:
+    image   <span class="op">=</span> bytearray()
+    frame_n <span class="op">=</span> <span class="nm">0</span>
+    <span class="kw">try</span>:
+        <span class="kw">while</span> <span class="kw">True</span>:
+            raw_hdr <span class="op">=</span> recv_exact(_VICP_HLEN)
+            op, _, _, _, length <span class="op">=</span> struct.unpack(_VICP_HDR, raw_hdr)
+            is_data <span class="op">=</span> bool(op <span class="op">&</span> <span class="nm">0x80</span>)   <span class="cm"># only DATA frames carry image</span>
+            eoi     <span class="op">=</span> bool(op <span class="op">&</span> <span class="nm">0x01</span>)   <span class="cm"># last frame of this response</span>
+            <span class="kw">if</span> length:
+                payload <span class="op">=</span> recv_exact(length)
+                <span class="kw">if</span> is_data:
+                    image.extend(payload)   <span class="cm"># accumulate DATA frames only</span>
+            frame_n <span class="op">+=</span> <span class="nm">1</span>
+            <span class="kw">if</span> eoi:
+                <span class="kw">break</span>
+    <span class="kw">except</span> (ConnectionError, OSError):
+        <span class="kw">pass</span>   <span class="cm"># scope closed connection — treat as end of data</span>
+    <span class="kw">except</span> Exception:
+        <span class="kw">pass</span>   <span class="cm"># timeout or other error — return what we have</span>
+    <span class="kw">return</span> bytes(image)</pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <strong>Multi-frame accumulation is critical.</strong>
+      A WS4034HD BMP screenshot is ~3.5 MB. LeCroy splits this across many VICP frames 
+      (each carrying up to 65,536 bytes). Reading only the first frame header's 
+      <code>length</code> field (as in a naive single-read implementation) returns 
+      only 65,000 bytes — a truncated image. The loop must continue until the 
+      <strong>EOI flag (bit 0)</strong> is set on an incoming frame's OP byte, or until 
+      the socket closes.
+    </div>
+  </div>
+
+  <h3 class="sub-heading">vicp_capture() — Complete Standalone Flow</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — vicp_capture()</span></div>
+    <pre><span class="kw">def</span> <span class="fn">vicp_capture</span>(ip: str, save_path: str, timeout_sec: int) <span class="op">-></span> bool:
+    <span class="cm">"""Full LeCroy capture — no VISA / VXI-11 required."""</span>
+    sock <span class="op">=</span> socket.create_connection((ip, <span class="nm">1861</span>), timeout<span class="op">=</span>timeout_sec)
+
+    <span class="cm"># Step 1 — identify</span>
+    _vicp_send(sock, <span class="st">"*IDN?"</span>)
+    time.sleep(<span class="nm">0.2</span>)
+    idn    <span class="op">=</span> _vicp_recv(sock).decode(<span class="st">"ascii"</span>).strip()
+    vendor <span class="op">=</span> detect_vendor(idn)
+    <span class="kw">if</span> vendor <span class="op">!=</span> <span class="st">"LECROY"</span>: <span class="kw">return</span> <span class="kw">False</span>
+
+    <span class="cm"># Step 2 — configure hardcopy format</span>
+    _vicp_send(sock, <span class="st">f"HCSU DEV,BMP,FORMAT,PORTRAIT,BCKG,{color},DEST,REMOTE,PORT,NET"</span>)
+    time.sleep(<span class="nm">0.5</span>)
+
+    <span class="cm"># Step 3 — trigger dump and wait for scope to render</span>
+    _vicp_send(sock, <span class="st">"SCREEN_DUMP"</span>)
+    time.sleep(<span class="nm">4.0</span>)   <span class="cm"># scope renders BMP internally before sending frames</span>
+
+    <span class="cm"># Step 4 — receive all frames</span>
+    image_data <span class="op">=</span> _vicp_recv(sock)
+
+    <span class="cm"># Step 5 — strip IEEE block header (if present) and save</span>
+    image_data <span class="op">=</span> _strip_ieee_block(image_data)
+    _save_image(image_data, save_path)
+    <span class="kw">return</span> <span class="kw">True</span></pre>
+  </div>
+
+  <!-- ── VISA FALLBACK ── -->
+  <a class="section-anchor" id="visa-fallback"></a>
+  <h2 class="section-heading"><span class="icon">🔁</span> VISA / VXI-11 Fallback</h2>
+
+  <p>
+    <code>scpi_capture()</code> handles all non-LeCroy instruments (Tektronix, Keysight, 
+    Rigol, Siglent) and LeCroy scopes configured with standard VXI-11 or HiSLIP.
+  </p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — scpi_capture() skeleton</span></div>
+    <pre><span class="kw">def</span> <span class="fn">scpi_capture</span>(resource_str: str, save_path: str, timeout_ms: int) <span class="op">-></span> bool:
+    rm <span class="op">=</span> _open_rm()
+
+    <span class="cm"># Build ::INSTR / ::INST suffix variants to try both automatically</span>
+    candidates <span class="op">=</span> [resource_str]
+    <span class="kw">if</span> resource_str.endswith(<span class="st">"::INSTR"</span>):
+        candidates.append(resource_str[:<span class="op">-</span>len(<span class="st">"INSTR"</span>)] <span class="op">+</span> <span class="st">"INST"</span>)
+    <span class="kw">elif</span> resource_str.endswith(<span class="st">"::INST"</span>):
+        candidates.append(resource_str[:<span class="op">-</span>len(<span class="st">"INST"</span>)] <span class="op">+</span> <span class="st">"INSTR"</span>)
+
+    <span class="cm"># Try each suffix variant until one opens</span>
+    scope <span class="op">=</span> <span class="kw">None</span>
+    <span class="kw">for</span> attempt <span class="kw">in</span> candidates:
+        <span class="kw">try</span>:
+            scope <span class="op">=</span> rm.open_resource(attempt, open_timeout<span class="op">=</span>timeout_ms)
+            <span class="kw">break</span>
+        <span class="kw">except</span> pyvisa.errors.VisaIOError:
+            scope <span class="op">=</span> <span class="kw">None</span>
+
+    <span class="cm"># Query IDN, dispatch to vendor dump, validate image size</span>
+    idn        <span class="op">=</span> scope.query(<span class="st">"*IDN?"</span>).strip()
+    vendor     <span class="op">=</span> detect_vendor(idn)
+    image_data <span class="op">=</span> _screen_dump(scope, vendor)
+
+    <span class="kw">if</span> <span class="kw">not</span> image_data <span class="kw">or</span> len(image_data) <span class="op"><</span> <span class="nm">100</span>:
+        <span class="cm"># LeCroy-specific VICP socket fallback</span>
+        <span class="kw">if</span> vendor <span class="op">==</span> <span class="st">"LECROY"</span> <span class="kw">and</span> <span class="st">"TCPIP::"</span> <span class="kw">in</span> resource_str.upper():
+            ip         <span class="op">=</span> resource_str.split(<span class="st">"::"</span>)[<span class="nm">1</span>]
+            image_data <span class="op">=</span> _dump_lecroy_vicp_raw(ip, color, timeout_ms <span class="op">//</span> <span class="nm">1000</span>)
+            <span class="cm"># ... strip, save, return True</span>
+        <span class="kw">return</span> <span class="kw">False</span>
+
+    _strip_ieee_block(image_data)
+    _save_image(image_data, save_path)
+    <span class="kw">return</span> <span class="kw">True</span></pre>
+  </div>
+
+  <h3 class="sub-heading">_open_rm() — Backend Selection</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — _open_rm()</span></div>
+    <pre><span class="kw">def</span> <span class="fn">_open_rm</span>() <span class="op">-></span> pyvisa.ResourceManager:
+    <span class="kw">try</span>:
+        rm <span class="op">=</span> pyvisa.ResourceManager()   <span class="cm"># NI-VISA / Keysight IO / IVI Foundation</span>
+        rm.list_resources()              <span class="cm"># quick smoke test — raises if unusable</span>
+        <span class="kw">return</span> rm
+    <span class="kw">except</span> Exception:
+        <span class="kw">pass</span>
+    <span class="kw">return</span> pyvisa.ResourceManager(<span class="st">"@py"</span>)  <span class="cm"># pyvisa-py pure Python fallback</span></pre>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <strong>Why prefer system VISA?</strong>
+      LeCroy scopes appear as <em>IVI devices</em> in Windows Device Manager when the 
+      LeCroy USB driver is installed. These devices are only visible to the NI-VISA / IVI 
+      system backend. pyvisa-py uses libusb/pyusb which enumerates USB-TMC class devices — 
+      a separate device class that LeCroy does not use.
+    </div>
+  </div>
+
+  <!-- ── VENDOR DISPATCH ── -->
+  <a class="section-anchor" id="vendor-dispatch"></a>
+  <h2 class="section-heading"><span class="icon">🏭</span> Vendor Detection &amp; Dispatch</h2>
+
+  <p>
+    <code>detect_vendor()</code> parses the <code>*IDN?</code> response and returns a 
+    normalized short tag. <code>_screen_dump()</code> uses this tag to call the correct 
+    vendor-specific implementation. For unknown vendors, all methods are tried in sequence.
+  </p>
+
+  <div class="vendor-grid">
+    <div class="vendor-card">
+      <div class="v-name">🔬 LeCroy / Teledyne</div>
+      <div class="v-cmd">HCSU + SCREEN_DUMP</div>
+      <div class="v-notes">VICP native (port 1861). Falls back to VISA write if needed. BMP format, configurable background.</div>
+    </div>
+    <div class="vendor-card">
+      <div class="v-name">📟 Tektronix</div>
+      <div class="v-cmd">HARDcopy START</div>
+      <div class="v-notes">INKSaver ON/OFF for background. Routes output to BUS via HARDcopy:PORT GPIB. BMP format.</div>
+    </div>
+    <div class="vendor-card">
+      <div class="v-name">📏 Keysight / Agilent</div>
+      <div class="v-cmd">:DISP:DATA? PNG,…</div>
+      <div class="v-notes">query_binary_values() returns IEEE 488.2 block. SCR=black bg, INKS=white bg. PNG format.</div>
+    </div>
+    <div class="vendor-card">
+      <div class="v-name">📡 Rigol / Siglent</div>
+      <div class="v-cmd">:DISP:DATA?</div>
+      <div class="v-notes">:DISP:DATA? ON,OFF,PNG (some firmware). Falls back to bare query. PNG format.</div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — detect_vendor()</span></div>
+    <pre><span class="kw">def</span> <span class="fn">detect_vendor</span>(idn: str) <span class="op">-></span> str:
+    <span class="cm"># IDN format: &lt;manufacturer&gt;,&lt;model&gt;,&lt;serial&gt;,&lt;firmware&gt;</span>
+    idn_upper <span class="op">=</span> idn.upper()
+    <span class="kw">if</span> <span class="st">"LECROY"</span> <span class="kw">in</span> idn_upper <span class="kw">or</span> <span class="st">"TELEDYNE"</span> <span class="kw">in</span> idn_upper: <span class="kw">return</span> <span class="st">"LECROY"</span>
+    <span class="kw">if</span> <span class="st">"TEKTRONIX"</span> <span class="kw">in</span> idn_upper <span class="kw">or</span> <span class="st">"TEK"</span> <span class="kw">in</span> idn_upper:     <span class="kw">return</span> <span class="st">"TEKTRONIX"</span>
+    <span class="kw">if</span> <span class="st">"KEYSIGHT"</span> <span class="kw">in</span> idn_upper <span class="kw">or</span> <span class="st">"AGILENT"</span> <span class="kw">in</span> idn_upper:  <span class="kw">return</span> <span class="st">"KEYSIGHT"</span>
+    <span class="kw">if</span> <span class="st">"RIGOL"</span>    <span class="kw">in</span> idn_upper:                              <span class="kw">return</span> <span class="st">"RIGOL"</span>
+    <span class="kw">if</span> <span class="st">"SIGLENT"</span>  <span class="kw">in</span> idn_upper:                              <span class="kw">return</span> <span class="st">"SIGLENT"</span>
+    <span class="kw">return</span> <span class="st">"UNKNOWN"</span></pre>
+  </div>
+
+  <!-- ── IMAGE UTILITIES ── -->
+  <a class="section-anchor" id="image-utils"></a>
+  <h2 class="section-heading"><span class="icon">🖼</span> Image Utilities</h2>
+
+  <h3 class="sub-heading">_strip_ieee_block()</h3>
+  <p>
+    The IEEE 488.2 standard defines a <strong>definite-length arbitrary block</strong> format 
+    used by many instruments to prefix binary data: <code>#N&lt;N digits of length&gt;&lt;data&gt;</code>. 
+    For example <code>#6065536&lt;65536 bytes of BMP&gt;</code> means 6 digits follow, the number 
+    is 065536, and then 65536 bytes of payload follow. The function strips this header so the 
+    caller receives clean BMP/PNG bytes.
+  </p>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">lecroy_capture.py — _strip_ieee_block()</span></div>
+    <pre><span class="kw">def</span> <span class="fn">_strip_ieee_block</span>(data: bytes) <span class="op">-></span> bytes:
+    <span class="kw">if</span> data <span class="kw">and</span> data[<span class="nm">0</span>:<span class="nm">1</span>] <span class="op">==</span> <span class="st">b"#"</span>:
+        <span class="kw">try</span>:
+            n_digits   <span class="op">=</span> int(chr(data[<span class="nm">1</span>]))
+            byte_count <span class="op">=</span> int(data[<span class="nm">2</span> : <span class="nm">2</span> <span class="op">+</span> n_digits])
+            data       <span class="op">=</span> data[<span class="nm">2</span> <span class="op">+</span> n_digits : <span class="nm">2</span> <span class="op">+</span> n_digits <span class="op">+</span> byte_count]
+        <span class="kw">except</span> Exception:
+            <span class="kw">pass</span>   <span class="cm"># malformed header — return original bytes unchanged</span>
+    <span class="kw">return</span> data</pre>
+  </div>
+
+  <h3 class="sub-heading">_save_image()</h3>
+  <p>
+    Attempts to open and re-save with Pillow first (enabling format conversion BMP→PNG and 
+    dimension printing). If Pillow fails to decode (e.g. the image is still truncated or 
+    in an unrecognised format), it falls back to writing raw bytes as a <code>.bmp</code> file.
+  </p>
+
+  <!-- ── NETWORK UTILITIES ── -->
+  <a class="section-anchor" id="network-utils"></a>
+  <h2 class="section-heading"><span class="icon">🔗</span> Network Utilities</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Function</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>validate_ip(ip)</td><td>Calls <code>ipaddress.ip_address()</code>; exits with error message on invalid string.</td></tr>
+        <tr><td>get_local_ip_for(remote)</td><td>Opens a UDP socket toward the remote IP and reads back the kernel-selected local IP — the NIC that would route to the scope.</td></tr>
+        <tr><td>subnet_info(scope_ip)</td><td>Calls <code>get_local_ip_for()</code>, builds a /24 network, checks if scope IP falls within it. Prints connectivity diagnosis.</td></tr>
+        <tr><td>check_tcp_reachable(ip)</td><td>Tries <code>create_connection()</code> on ports 1861, 5025, and 80 in sequence. Returns True on first success. Non-blocking for unreachable hosts — 3 s timeout per port.</td></tr>
+        <tr><td>try_http_auth(ip, user, pwd)</td><td>Performs HTTP Basic Auth GET to <code>http://&lt;ip&gt;/</code>. Non-fatal: exception is silently swallowed. Only called when USERNAME or PASSWORD is non-empty.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── API REFERENCE ── -->
+  <a class="section-anchor" id="api-reference"></a>
+  <h2 class="section-heading"><span class="icon">📖</span> API Reference — lecroy_capture.py</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Function</th><th>Signature</th><th>Returns</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>_open_rm</td><td><code>() → ResourceManager</code></td><td>ResourceManager</td><td>System VISA preferred, pyvisa-py fallback.</td></tr>
+        <tr><td>_timestamped_path</td><td><code>(base: str) → str</code></td><td>str</td><td>Inserts <code>_YYYYMMDD_HHMMSS</code> before extension.</td></tr>
+        <tr><td>validate_ip</td><td><code>(ip: str) → None</code></td><td>—</td><td>Calls <code>sys.exit(1)</code> on invalid IP.</td></tr>
+        <tr><td>get_local_ip_for</td><td><code>(remote: str) → str</code></td><td>str</td><td>UDP routing trick to find active NIC IP.</td></tr>
+        <tr><td>subnet_info</td><td><code>(scope_ip: str) → None</code></td><td>—</td><td>Prints NIC/scope IPs and subnet match status.</td></tr>
+        <tr><td>check_tcp_reachable</td><td><code>(ip: str, timeout: int) → bool</code></td><td>bool</td><td>Probes ports 1861, 5025, 80.</td></tr>
+        <tr><td>build_ethernet_resources</td><td><code>(ip: str, port: int) → list</code></td><td>list[str]</td><td>Returns ordered VISA candidate strings.</td></tr>
+        <tr><td>find_usb_resource</td><td><code>(rm) → str | None</code></td><td>str or None</td><td>Searches INSTR/INST/wildcard patterns.</td></tr>
+        <tr><td>detect_vendor</td><td><code>(idn: str) → str</code></td><td>str</td><td>Returns LECROY / TEKTRONIX / KEYSIGHT / RIGOL / SIGLENT / UNKNOWN.</td></tr>
+        <tr><td>vicp_capture</td><td><code>(ip, save_path, timeout_sec) → bool</code></td><td>bool</td><td>Full native VICP capture. LeCroy only.</td></tr>
+        <tr><td>scpi_capture</td><td><code>(resource_str, save_path, timeout_ms) → bool</code></td><td>bool</td><td>VISA-based capture with suffix retry and VICP fallback.</td></tr>
+        <tr><td>_screen_dump</td><td><code>(scope, vendor) → bytes | None</code></td><td>bytes</td><td>Dispatches to vendor-specific implementation.</td></tr>
+        <tr><td>_dump_lecroy</td><td><code>(scope, color) → bytes</code></td><td>bytes</td><td>HCSU + SCREEN_DUMP via VISA write/read_raw.</td></tr>
+        <tr><td>_dump_tektronix</td><td><code>(scope, color) → bytes</code></td><td>bytes</td><td>HARDcopy START via VISA.</td></tr>
+        <tr><td>_dump_keysight</td><td><code>(scope, color) → bytes</code></td><td>bytes</td><td>:DISP:DATA? PNG via query_binary_values.</td></tr>
+        <tr><td>_dump_rigol</td><td><code>(scope, color) → bytes</code></td><td>bytes</td><td>:DISP:DATA? with firmware-variant fallback.</td></tr>
+        <tr><td>_vicp_send</td><td><code>(sock, cmd) → None</code></td><td>—</td><td>Wraps ASCII command in VICP 8-byte header.</td></tr>
+        <tr><td>_vicp_recv</td><td><code>(sock) → bytes</code></td><td>bytes</td><td>Accumulates all DATA frames until EOI or socket close.</td></tr>
+        <tr><td>_dump_lecroy_vicp_raw</td><td><code>(ip, color, timeout_sec) → bytes</code></td><td>bytes</td><td>Raw socket HCSU + SCREEN_DUMP without IDN check.</td></tr>
+        <tr><td>_strip_ieee_block</td><td><code>(data: bytes) → bytes</code></td><td>bytes</td><td>Strips <code>#N&lt;len&gt;</code> IEEE 488.2 header if present.</td></tr>
+        <tr><td>_save_image</td><td><code>(data, path) → None</code></td><td>—</td><td>Pillow PNG save with raw BMP fallback.</td></tr>
+        <tr><td>try_http_auth</td><td><code>(ip, user, pwd, timeout) → None</code></td><td>—</td><td>Silent HTTP Basic Auth handshake.</td></tr>
+        <tr><td>main</td><td><code>() → None</code></td><td>—</td><td>Entry point. Branches USB / Ethernet.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════
+       SCOPE_SCANNER.PY
+  ═══════════════════════════════════════════════════════ -->
+
+  <a class="section-anchor" id="scanner-overview"></a>
+  <h2 class="section-heading"><span class="icon">🔭</span> scope_scanner.py — Overview</h2>
+
+  <p>
+    <code>scope_scanner.py</code> performs a full discovery pass of all instruments reachable 
+    from the local machine. Ethernet and USB scans run <strong>in parallel threads</strong>. 
+    The Ethernet scan itself is multi-threaded with up to <code>MAX_WORKERS</code> concurrent 
+    TCP probes. Results are only reported for hosts that respond with a valid <code>*IDN?</code> 
+    string — bare TCP port opens are ignored.
+  </p>
+
+  <div class="card">
+    <h3 class="sub-heading">Scanner Configuration</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>SCAN_ETHERNET</td><td><code>True</code></td><td>Enable Ethernet subnet scan.</td></tr>
+          <tr><td>SCAN_USB</td><td><code>True</code></td><td>Enable USB-TMC VISA scan.</td></tr>
+          <tr><td>SUBNET</td><td><code>""</code></td><td>Override subnet, e.g. <code>"192.168.1.0/24"</code>. Empty = auto-detect all active NICs.</td></tr>
+          <tr><td>SCPI_PORTS</td><td><code>[5025, 1861, 80]</code></td><td>TCP ports probed on each host. Port 1861 = VICP, 5025 = raw SCPI.</td></tr>
+          <tr><td>MAX_WORKERS</td><td><code>64</code></td><td>Concurrent TCP connection threads per subnet.</td></tr>
+          <tr><td>TCP_TIMEOUT</td><td><code>0.5</code></td><td>Per-host TCP connect timeout (seconds). Keep low for fast sweeps.</td></tr>
+          <tr><td>IDN_TIMEOUT</td><td><code>3</code></td><td>Seconds to wait for <code>*IDN?</code> response after port is found open.</td></tr>
+          <tr><td>CSV_OUTPUT</td><td><code>""</code></td><td>File path to write results as CSV. Empty = console only.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── SCANNER ETHERNET ── -->
+  <a class="section-anchor" id="scanner-eth"></a>
+  <h2 class="section-heading"><span class="icon">🌍</span> Scanner — Ethernet Scan</h2>
+
+  <h3 class="sub-heading">get_all_subnets() — Multi-NIC Enumeration</h3>
+  <p>
+    Implements a 3-tier fallback to discover all active IPv4 NICs, covering Wi-Fi, 
+    Ethernet, VPN adapters, and virtual interfaces simultaneously.
+  </p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">1</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>psutil (preferred)</h4>
+        <p>Iterates <code>psutil.net_if_addrs()</code> filtered by <code>net_if_stats().isup</code>. For each active IPv4 address, constructs a <code>IPv4Network(ip/mask, strict=False)</code> CIDR. Skips loopback and APIPA addresses. Returns <code>(interface_name, cidr)</code> tuples — the interface name is shown in the scan header for clarity.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">2</div><div class="flow-line"></div></div>
+      <div class="flow-body">
+        <h4>socket.getaddrinfo hostname trick</h4>
+        <p>Resolves the machine's hostname via <code>socket.getaddrinfo(hostname, None, AF_INET)</code>. Used when psutil is not installed. Assumes /24 subnet mask.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-left"><div class="flow-num">3</div></div>
+      <div class="flow-body">
+        <h4>UDP routing trick</h4>
+        <p>Creates a UDP socket and calls <code>connect("8.8.8.8", 80)</code>. The kernel selects the default-route interface without sending any packets. Reads back the local IP with <code>getsockname()</code>. Last resort — only discovers the single default-route NIC.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub-heading">scan_host() — Per-Host Probe</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">scope_scanner.py — scan_host()</span></div>
+    <pre><span class="kw">def</span> <span class="fn">scan_host</span>(ip: str) <span class="op">-></span> dict <span class="op">|</span> <span class="kw">None</span>:
+    <span class="kw">for</span> port <span class="kw">in</span> SCPI_PORTS:
+        <span class="kw">if not</span> tcp_probe(ip, port, TCP_TIMEOUT):
+            <span class="kw">continue</span>                          <span class="cm"># port closed — skip</span>
+
+        <span class="cm"># Only query IDN on SCPI ports; ignore port 80 for IDN</span>
+        idn <span class="op">=</span> query_idn(ip, port, IDN_TIMEOUT) <span class="kw">if</span> port <span class="kw">in</span> (<span class="nm">5025</span>, <span class="nm">1861</span>) <span class="kw">else</span> <span class="st">""</span>
+        <span class="kw">if not</span> idn:
+            <span class="kw">continue</span>                          <span class="cm"># port open but not a SCPI scope</span>
+
+        <span class="kw">return</span> {
+            <span class="st">"type"</span>    : <span class="st">"ETHERNET"</span>,
+            <span class="st">"address"</span> : ip,
+            <span class="st">"port"</span>    : port,
+            <span class="st">"idn"</span>     : idn,
+            <span class="st">"vendor"</span>  : detect_vendor(idn),
+            <span class="st">"resource"</span>: <span class="st">f"TCPIP::{ip}::inst0::INSTR"</span>,
+        }
+    <span class="kw">return None</span></pre>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-icon">✅</div>
+    <div class="callout-body">
+      <strong>IDN-only results policy.</strong>
+      A TCP port open on 5025 or 1861 alone is not sufficient — many printers, NAS devices, 
+      and IoT devices respond on these ports. <code>scan_host()</code> only returns a result 
+      if a valid <code>*IDN?</code> query elicits a non-empty response within 
+      <code>IDN_TIMEOUT</code> seconds.
+    </div>
+  </div>
+
+  <h3 class="sub-heading">query_idn() — Raw SCPI over TCP</h3>
+  <p>
+    Sends <code>*IDN?\n</code> as raw bytes on a plain TCP socket. This works for both 
+    port 5025 (raw SCPI) and port 1861 (VICP) — on VICP port, LeCroy accepts raw text 
+    commands without the 8-byte framing header for simple queries.
+  </p>
+
+  <!-- ── SCANNER USB ── -->
+  <a class="section-anchor" id="scanner-usb"></a>
+  <h2 class="section-heading"><span class="icon">🔌</span> Scanner — USB Scan</h2>
+
+  <p>
+    The USB scan runs in a background thread concurrently with the Ethernet progress bar. 
+    It returns a <code>(results, log_lines)</code> tuple — the log is buffered and printed 
+    only <em>after</em> the Ethernet progress bar completes, preventing console corruption.
+  </p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Python</span><span class="code-file">scope_scanner.py — scan_usb() pattern</span></div>
+    <pre><span class="kw">def</span> <span class="fn">scan_usb</span>() <span class="op">-></span> tuple[list[dict], list[str]]:
+    log <span class="op">=</span> []   <span class="cm"># all output buffered — never printed inside this function</span>
+    rm  <span class="op">=</span> _open_rm()
+    log.append(<span class="st">f"[USB] VISA backend: {rm.visalib}"</span>)
+
+    <span class="cm"># Try broadest-to-narrowest suffix patterns</span>
+    <span class="kw">for</span> pattern <span class="kw">in</span> (<span class="st">"USB?*::INSTR"</span>, <span class="st">"USB?*::INST"</span>, <span class="st">"USB?*"</span>):
+        found <span class="op">=</span> list(rm.list_resources(pattern))
+        <span class="kw">if</span> found: <span class="kw">break</span>
+
+    <span class="kw">for</span> res <span class="kw">in</span> usb_resources:
+        inst <span class="op">=</span> rm.open_resource(res, open_timeout<span class="op">=</span>IDN_TIMEOUT <span class="op">*</span> <span class="nm">1000</span>)
+        idn  <span class="op">=</span> inst.query(<span class="st">"*IDN?"</span>).strip()
+        log.append(<span class="st">f"  [FOUND] USB  {detect_vendor(idn)}  {idn[:70]}"</span>)
+
+    <span class="kw">return</span> results, log  <span class="cm"># caller prints log when safe</span></pre>
+  </div>
+
+  <!-- ── SCANNER API ── -->
+  <a class="section-anchor" id="scanner-api"></a>
+  <h2 class="section-heading"><span class="icon">📖</span> API Reference — scope_scanner.py</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Function</th><th>Signature</th><th>Returns</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>get_all_subnets</td><td><code>() → list[tuple[str,str]]</code></td><td>list of (label, cidr)</td><td>psutil → getaddrinfo → UDP trick fallback chain.</td></tr>
+        <tr><td>tcp_probe</td><td><code>(ip, port, timeout) → bool</code></td><td>bool</td><td>Single TCP connect attempt.</td></tr>
+        <tr><td>query_idn</td><td><code>(ip, port, timeout) → str</code></td><td>str</td><td>Sends <code>*IDN?\n</code>; reads until newline or timeout.</td></tr>
+        <tr><td>detect_vendor</td><td><code>(idn: str) → str</code></td><td>str</td><td>Same logic as lecroy_capture.py.</td></tr>
+        <tr><td>scan_host</td><td><code>(ip: str) → dict | None</code></td><td>dict or None</td><td>Probes all SCPI_PORTS; returns result only on valid IDN.</td></tr>
+        <tr><td>scan_ethernet</td><td><code>(subnet, label) → list[dict]</code></td><td>list[dict]</td><td>ThreadPoolExecutor sweep with live progress bar.</td></tr>
+        <tr><td>scan_all_ethernet</td><td><code>(subnets) → list[dict]</code></td><td>list[dict]</td><td>Iterates all NICs; deduplicates by IP.</td></tr>
+        <tr><td>scan_usb</td><td><code>() → tuple[list, list]</code></td><td>(results, log)</td><td>Buffered output; prints after ETH bar finishes.</td></tr>
+        <tr><td>print_results</td><td><code>(results: list) → None</code></td><td>—</td><td>Formatted table output with fixed column widths.</td></tr>
+        <tr><td>save_csv</td><td><code>(results, path) → None</code></td><td>—</td><td>Writes CSV with DictWriter.</td></tr>
+        <tr><td>main</td><td><code>() → None</code></td><td>—</td><td>Parallel ETH+USB launch; sequential display.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── PROTOCOLS ── -->
+  <a class="section-anchor" id="protocols"></a>
+  <h2 class="section-heading"><span class="icon">📡</span> Protocol Reference</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Protocol</th><th>Port</th><th>Transport</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>VICP</td><td>1861/TCP</td><td>Raw TCP + 8-byte binary header</td><td>LeCroy proprietary. Handles both command text and binary image data. Used natively by this toolkit.</td></tr>
+        <tr><td>VXI-11</td><td>111/TCP (Sun RPC)</td><td>ONC RPC / SunRPC</td><td>IEEE 488.2 over LAN. VISA resource: <code>TCPIP::IP::inst0::INSTR</code>. LeCroy uses this for text SCPI but NOT for image binary transfer.</td></tr>
+        <tr><td>HiSLIP</td><td>4880/TCP</td><td>TCP stream</td><td>Modern LAN instrument protocol (IVI-6.1). VISA resource: <code>TCPIP::IP::hislip0::INSTR</code>. Supported by newer Keysight/Rigol scopes.</td></tr>
+        <tr><td>Raw SCPI</td><td>5025/TCP</td><td>Plain TCP</td><td>Bare SCPI text over TCP socket. VISA resource: <code>TCPIP::IP::5025::SOCKET</code>. Supported by Rigol, some Siglent.</td></tr>
+        <tr><td>USB-TMC</td><td>USB</td><td>USB class 0xFE sub 0x03</td><td>IEEE 488.2 over USB. Requires NI-VISA or pyvisa-py + libusb. VISA resource: <code>USB0::VID::PID::serial::INSTR</code>.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── VENDORS ── -->
+  <a class="section-anchor" id="vendors"></a>
+  <h2 class="section-heading"><span class="icon">🏭</span> Vendor SCPI Commands</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Vendor</th><th>Config Command</th><th>Trigger Command</th><th>Format</th><th>Color Control</th></tr></thead>
+      <tbody>
+        <tr><td>LeCroy</td><td><code>HCSU DEV,BMP,FORMAT,PORTRAIT,BCKG,{color},DEST,REMOTE,PORT,NET</code></td><td><code>SCREEN_DUMP</code></td><td>BMP</td><td><code>BCKG,WHITE</code> / <code>BCKG,BLACK</code></td></tr>
+        <tr><td>Tektronix</td><td><code>HARDcopy:PORT GPIB</code> + <code>HARDcopy:FORMat BMP</code> + <code>HARDcopy:INKSaver ON|OFF</code></td><td><code>HARDcopy START</code></td><td>BMP</td><td>INKSaver ON=white / OFF=black</td></tr>
+        <tr><td>Keysight</td><td>—</td><td><code>:DISP:DATA? PNG,INKS|SCR,COL</code></td><td>PNG (IEEE block)</td><td>INKS=white / SCR=black</td></tr>
+        <tr><td>Rigol</td><td><code>:DISP:DATA? ON,OFF,PNG</code></td><td>(combined)</td><td>PNG (IEEE block)</td><td>Second arg: OFF=white / ON=black</td></tr>
+        <tr><td>Siglent</td><td><code>:DISP:DATA?</code></td><td>(combined)</td><td>PNG (IEEE block)</td><td>Limited firmware support</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── DEPENDENCIES ── -->
+  <a class="section-anchor" id="deps"></a>
+  <h2 class="section-heading"><span class="icon">📦</span> Dependencies</h2>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Package</th><th>Version</th><th>Required?</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td>pyvisa</td><td>&ge;1.13.0</td><td><span class="badge blue">Required</span></td><td>VISA instrument control abstraction layer. Interfaces with system VISA backend (NI/IVI) or pyvisa-py.</td></tr>
+        <tr><td>pyvisa-py</td><td>&ge;0.7.0</td><td><span class="badge yellow">Fallback</span></td><td>Pure-Python VISA backend when NI-VISA/IVI is not installed. Required for USB-TMC without IVI driver.</td></tr>
+        <tr><td>pyusb</td><td>&ge;1.2.1</td><td><span class="badge yellow">USB only</span></td><td>Low-level USB library used by pyvisa-py for USB-TMC transport.</td></tr>
+        <tr><td>Pillow</td><td>&ge;10.0.0</td><td><span class="badge green">Recommended</span></td><td>Image decoding and PNG conversion. Without it, images are saved as raw BMP bytes.</td></tr>
+        <tr><td>psutil</td><td>&ge;5.9.0</td><td><span class="badge green">Recommended</span></td><td>Multi-NIC enumeration in scope_scanner.py. Without it, only a single /24 subnet is scanned.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-lang">Text</span><span class="code-file">requirements.txt</span></div>
+    <pre>pyvisa>=1.13.0
+pyvisa-py>=0.7.0
+pyusb>=1.2.1
+Pillow>=10.0.0
+psutil>=5.9.0</pre>
+  </div>
+
+  <!-- ── TROUBLESHOOTING ── -->
+  <a class="section-anchor" id="troubleshooting"></a>
+  <h2 class="section-heading"><span class="icon">🛠</span> Troubleshooting</h2>
+
+  <div class="card">
+    <h3 class="sub-heading">Image only 52 bytes via VXI-11</h3>
+    <p>
+      This is expected behaviour for LeCroy scopes in <strong>TCPIP/VICP mode</strong>. 
+      VXI-11 returns a short text acknowledgment; the image travels over VICP port 1861. 
+      The script handles this automatically — <code>vicp_capture()</code> is always tried 
+      first and will succeed if VICP is enabled on the scope.
+    </p>
+    <div class="callout success">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body">Verify via: <code>Utilities → Remote → TCPIP/VICP</code> on the scope front panel.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sub-heading">VI_ERROR_RSRC_NFOUND on USB</h3>
+    <p>LeCroy IVI driver uses <code>::INST</code> suffix; standard VISA uses <code>::INSTR</code>. The script retries both automatically. If still failing:</p>
+    <ul style="margin: 8px 0 0 20px; color: var(--text-muted); font-size: .9rem; line-height: 2;">
+      <li>Run <code>python -m visa info</code> to list detected resources</li>
+      <li>Set <code>USB_RESOURCE</code> explicitly to the exact string shown</li>
+      <li>Ensure the LeCroy IVI/USB driver is installed (shows in Device Manager)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 class="sub-heading">Scanner only finds one subnet</h3>
+    <p>psutil is not installed or the NIC is down. The script prints which interfaces it detects before scanning. Install psutil (<code>pip install psutil</code>) and ensure all relevant NICs have active connections.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="sub-heading">Image truncated / Pillow decode error</h3>
+    <p>
+      The VICP transfer completed but not all frames arrived — likely because the 
+      <code>time.sleep(4.0)</code> post-<code>SCREEN_DUMP</code> wait was insufficient 
+      for your scope's rendering speed. Increase <code>TIMEOUT_SEC</code> in the config 
+      or directly increase the sleep value in <code>_dump_lecroy_vicp_raw()</code>.
+    </p>
+    <p>
+      The frame-by-frame debug output (e.g. <code>[VICP] frame 1: op=0xC1 len=65,536 total=65,536 eoi=False</code>) 
+      will show exactly how many frames arrived and at what cumulative byte count transfer stopped.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3 class="sub-heading">Windows Firewall blocking connections</h3>
+    <p>Add inbound rules for the scope's IP on ports 1861 and 5025, or temporarily disable the firewall profile for private networks. Test connectivity with:</p>
+    <div class="code-block">
+      <div class="code-header"><span class="code-lang">PowerShell</span></div>
+      <pre>Test-NetConnection 192.168.1.51 -Port 1861
+Test-NetConnection 192.168.1.51 -Port 5025</pre>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<!-- ═══════════════════ THEME TOGGLE SCRIPT ═══════════════════ -->
+<script>
+const btn   = document.getElementById('themeBtn');
+const html  = document.documentElement;
+
+function setTheme(t) {
+  html.setAttribute('data-theme', t);
+  btn.textContent = t === 'dark' ? '🌙' : '☀️';
+  localStorage.setItem('lcss-theme', t);
+}
+
+// Init from storage
+setTheme(localStorage.getItem('lcss-theme') || 'dark');
+
+btn.addEventListener('click', () => {
+  setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+// Active nav link on scroll
+const anchors = document.querySelectorAll('.section-anchor');
+const links   = document.querySelectorAll('.nav-link');
+
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      links.forEach(l => {
+        l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { rootMargin: '-15% 0px -80% 0px' });
+
+anchors.forEach(a => io.observe(a));
+
+// Sidebar search filter
+document.getElementById('sidebarSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  links.forEach(l => {
+    const txt = l.textContent.toLowerCase();
+    l.style.display = (!q || txt.includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.nav-group-label').forEach(g => {
+    const next = g.nextElementSibling;
+    g.style.display = (next && next.style.display !== 'none') ? '' : (q ? 'none' : '');
+  });
+});
+</script>
+
+</body>
+</html>
