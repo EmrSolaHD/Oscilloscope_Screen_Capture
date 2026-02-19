@@ -1,0 +1,25 @@
+# ──────────────────────────────────────────────────────────────────────────
+#  Oscilloscope Screen Capture — Python dependencies
+#  Install with:   pip install -r requirements.txt
+# ──────────────────────────────────────────────────────────────────────────
+
+# VISA instrument control (IEEE 488.2 / SCPI over Ethernet and USB)
+pyvisa>=1.13.0
+
+# Pure-Python VISA backend — no NI-VISA driver installation required.
+# Handles:  USB-TMC (USB),  VXI-11 & HiSLIP (TCP/IP),  Serial (COM)
+pyvisa-py>=0.7.0
+
+# USB-TMC transport for pyvisa-py (required for USB connection mode)
+pyusb>=1.2.1
+
+# Image decoding and format conversion (BMP → PNG, etc.)
+Pillow>=10.0.0
+
+# Network interface enumeration (Wi-Fi + LAN multi-NIC scanning)
+psutil>=5.9.0
+
+# ── Optional — install only if you need them ──────────────────────────────
+
+# zeroconf  — mDNS/VXI-11 scope discovery on the local network
+ zeroconf>=0.131.0
