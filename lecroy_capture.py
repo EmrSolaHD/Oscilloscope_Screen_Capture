@@ -21,7 +21,7 @@
  ────────────────
   "ETHERNET"  — Scope connected via LAN/Ethernet.
                  PC and scope must share a subnet (or have a gateway route).
-                 Typical VISA resource:  TCPIP::192.168.1.51::inst0::INSTR
+                 Typical VISA resource:  TCPIP::1[<This is IP address placeholder>]::inst0::INSTR
 
   "USB"        — Scope connected via USB-B cable (USB-TMC).
                  Set USB_RESOURCE to the exact VISA string, OR leave it ""
@@ -45,15 +45,15 @@ CONNECTION_TYPE = "ETHERNET"
 CONNECTION_TYPE = "USB"
 
 # ── Ethernet settings (used when CONNECTION_TYPE = "ETHERNET") ────────────── #
-SCOPE_IP        = "192.168.1.51"   # IP address of the oscilloscope
+SCOPE_IP        = "1[<This is IP address placeholder>]"   # IP address of the oscilloscope
 SCOPE_PORT      = 0                # 0 = auto  |  1861 = VICP  |  5025 = SCPI raw
                                    # (auto tries VXI-11 first, then HiSLIP, then raw)
 USERNAME        = ""               # HTTP/web auth — leave "" if not required
 PASSWORD        = ""               # HTTP/web auth — leave "" if not required
 
 # ── USB settings (used when CONNECTION_TYPE = "USB") ──────────────────────── #
-#USB_RESOURCE    = "USB1::0x05FF::0x1023::LCRY4903C21017::0::I"               # e.g. "USB0::0x05FF::0x1023::12345::INSTR"
-USB_RESOURCE    = "USB0::0x05FF::0x1023::LCRY4903C21017::INST"               # e.g. "USB0::0x05FF::0x1023::12345::INSTR"
+#USB_RESOURCE    = "[<This is USB address pleaceholder>]"               # e.g. "USB0::0x05FF::0x1023::12345::INSTR"
+USB_RESOURCE    = "[<This is USB address placeholder>]"               # e.g. "USB0::0x05FF::0x1023::12345::INSTR"
                                    # Leave "" to auto-detect first USB instrument
 
 # ── Output ────────────────────────────────────────────────────────────────── #

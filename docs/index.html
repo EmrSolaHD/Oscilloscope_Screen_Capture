@@ -695,7 +695,7 @@ pip install -r requirements.txt</pre>
 CONNECTION_TYPE <span class="op">=</span> <span class="st">"ETHERNET"</span>   <span class="cm"># or "USB"</span>
 
 <span class="cm"># ── Ethernet ─────────────────────────────────────────────── #</span>
-SCOPE_IP        <span class="op">=</span> <span class="st">"192.168.1.51"</span>
+SCOPE_IP        <span class="op">=</span> <span class="st">"1[<This is IP address placeholder>]"</span>
 SCOPE_PORT      <span class="op">=</span> <span class="nm">0</span>            <span class="cm"># 0 = auto</span>
 
 <span class="cm"># ── USB ──────────────────────────────────────────────────── #</span>
@@ -724,11 +724,11 @@ python scope_scanner.py</pre>
       <thead><tr><th>Variable</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td>CONNECTION_TYPE</td><td>str</td><td><code>"ETHERNET"</code></td><td>Connection mode. <code>"ETHERNET"</code> or <code>"USB"</code>.</td></tr>
-        <tr><td>SCOPE_IP</td><td>str</td><td><code>"192.168.1.51"</code></td><td>IPv4 address of the oscilloscope. Ethernet mode only.</td></tr>
+        <tr><td>SCOPE_IP</td><td>str</td><td><code>"1[<This is IP address placeholder>]"</code></td><td>IPv4 address of the oscilloscope. Ethernet mode only.</td></tr>
         <tr><td>SCOPE_PORT</td><td>int</td><td><code>0</code></td><td><code>0</code> = auto (tries VXI-11 → HiSLIP → raw SCPI). Set <code>1861</code> for VICP-only, <code>5025</code> for raw SCPI-only.</td></tr>
         <tr><td>USERNAME</td><td>str</td><td><code>""</code></td><td>HTTP Basic Auth username. Required only if the scope web interface is password-protected.</td></tr>
         <tr><td>PASSWORD</td><td>str</td><td><code>""</code></td><td>HTTP Basic Auth password. Leave empty if not used.</td></tr>
-        <tr><td>USB_RESOURCE</td><td>str</td><td><code>""</code></td><td>Exact VISA resource string for USB, e.g. <code>"USB0::0x05FF::0x1023::LCRY4903C21017::INST"</code>. Leave <code>""</code> to auto-detect first found USB instrument.</td></tr>
+        <tr><td>USB_RESOURCE</td><td>str</td><td><code>""</code></td><td>Exact VISA resource string for USB, e.g. <code>"[<This is USB address placeholder>]"</code>. Leave <code>""</code> to auto-detect first found USB instrument.</td></tr>
         <tr><td>SAVE_PATH</td><td>str</td><td><code>r"C:\captures\scope_screenshot.png"</code></td><td>Output file path. Accepts <code>.png</code> or <code>.bmp</code>. Timestamp is appended automatically before the extension.</td></tr>
         <tr><td>TIMEOUT_SEC</td><td>int</td><td><code>15</code></td><td>Global timeout in seconds for TCP connections and VISA operations.</td></tr>
         <tr><td>DISPLAY_COLOR</td><td>str</td><td><code>"WHITE"</code></td><td>Screenshot background: <code>"WHITE"</code> (print-friendly) or <code>"BLACK"</code> (scope native look). Applies to all vendor implementations.</td></tr>
@@ -1419,8 +1419,8 @@ psutil>=5.9.0</pre>
     <p>Add inbound rules for the scope's IP on ports 1861 and 5025, or temporarily disable the firewall profile for private networks. Test connectivity with:</p>
     <div class="code-block">
       <div class="code-header"><span class="code-lang">PowerShell</span></div>
-      <pre>Test-NetConnection 192.168.1.51 -Port 1861
-Test-NetConnection 192.168.1.51 -Port 5025</pre>
+      <pre>Test-NetConnection 1[<This is IP address placeholder>] -Port 1861
+Test-NetConnection 1[<This is IP address placeholder>] -Port 5025</pre>
     </div>
   </div>
 

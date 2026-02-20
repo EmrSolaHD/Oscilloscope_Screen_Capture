@@ -79,7 +79,7 @@ pip install -r requirements.txt
 CONNECTION_TYPE = "ETHERNET"   # or "USB"
 
 # ── Ethernet ─────────────────────────────────────────────── #
-SCOPE_IP        = "192.168.1.51"
+SCOPE_IP        = "1[<This is IP address placeholder>]"
 SCOPE_PORT      = 0            # 0 = auto
 
 # ── USB ──────────────────────────────────────────────────── #
@@ -106,11 +106,11 @@ python scope_scanner.py
 | Variable | Type | Default | Description |
 |---|---|---|---|
 | `CONNECTION_TYPE` | str | `"ETHERNET"` | Connection mode. `"ETHERNET"` or `"USB"`. |
-| `SCOPE_IP` | str | `"192.168.1.51"` | IPv4 address of the oscilloscope. Ethernet mode only. |
+| `SCOPE_IP` | str | `"1[<This is IP address placeholder>]"` | IPv4 address of the oscilloscope. Ethernet mode only. |
 | `SCOPE_PORT` | int | `0` | `0` = auto (tries VXI-11 → HiSLIP → raw SCPI). Set `1861` for VICP-only, `5025` for raw SCPI-only. |
 | `USERNAME` | str | `""` | HTTP Basic Auth username. Required only if the scope web interface is password-protected. |
 | `PASSWORD` | str | `""` | HTTP Basic Auth password. Leave empty if not used. |
-| `USB_RESOURCE` | str | `""` | Exact VISA resource string for USB, e.g. `"USB0::0x05FF::0x1023::LCRY4903C21017::INST"`. Leave `""` to auto-detect. |
+| `USB_RESOURCE` | str | `""` | Exact VISA resource string for USB, e.g. `"[<This is USB address placeholder>]"`. Leave `""` to auto-detect. |
 | `SAVE_PATH` | str | `r"C:\captures\scope_screenshot.png"` | Output file path. Accepts `.png` or `.bmp`. Timestamp is appended automatically before the extension. |
 | `TIMEOUT_SEC` | int | `15` | Global timeout in seconds for TCP connections and VISA operations. |
 | `DISPLAY_COLOR` | str | `"WHITE"` | Screenshot background: `"WHITE"` (print-friendly) or `"BLACK"` (scope native look). |
@@ -447,6 +447,6 @@ The frame-by-frame debug output (e.g. `[VICP] frame 1: op=0xC1 len=65,536 total=
 Add inbound rules for the scope's IP on ports 1861 and 5025, or temporarily disable the firewall profile for private networks. Test connectivity with:
 
 ```powershell
-Test-NetConnection 192.168.1.51 -Port 1861
-Test-NetConnection 192.168.1.51 -Port 5025
+Test-NetConnection 1[<This is IP address placeholder>] -Port 1861
+Test-NetConnection 1[<This is IP address placeholder>] -Port 5025
 ```
